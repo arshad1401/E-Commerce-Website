@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login | E‑Shop</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header class="container header">
+    <a class="logo" href="/">E‑Shop</a>
+    <nav class="nav">
+      <a href="/register.html">Register</a>
+      <a href="/cart.html">Cart (<span id="cart-count">0</span>)</a>
+      <a href="/admin.html">Admin</a>
+    </nav>
+  </header>
+
+  <main class="container auth">
+    <form id="form" class="card">
+      <h1>Login</h1>
+      <label>Email<input id="email" type="email" required></label>
+      <label>Password<input id="password" type="password" required></label>
+      <button class="btn" type="submit">Login</button>
+      <p id="msg"></p>
+    </form>
+  </main>
+
+  <footer class="container footer">
+    <span>© <span id="year"></span> E‑Shop</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/auth.js"></script>
+  <script>
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const res = await login(email, password);
+      document.getElementById('msg').textContent = res.ok ? 'Logged in.' : (res.error || 'Login failed');
+      if (res.ok) setTimeout(() => location.href='/', 500);
+    });
+  </script>
+</body>
+</html>

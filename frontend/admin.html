@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin | E‑Shop</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header class="container header">
+    <a class="logo" href="/">E‑Shop</a>
+    <nav class="nav">
+      <a href="/cart.html">Cart (<span id="cart-count">0</span>)</a>
+      <a href="/login.html">Login</a>
+      <button id="logout" class="linklike">Logout</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Admin: Products</h1>
+    <form id="newProd" class="card">
+      <label>Name<input id="pname" required></label>
+      <label>Price (₹)<input id="pprice" type="number" required></label>
+      <label>Image URL<input id="pimage" required></label>
+      <label>Description<textarea id="pdesc" rows="3"></textarea></label>
+      <button class="btn">Add Product</button>
+      <p id="pmsg"></p>
+    </form>
+
+    <div id="plist" class="grid"></div>
+  </main>
+
+  <footer class="container footer">
+    <span>© <span id="year"></span> E‑Shop</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/auth.js"></script>
+  <script src="./assets/js/cart.js"></script>
+  <script>
+    requireAdmin();
+
+    document.getElementById('logout').onclick = () => { logout(); location.reload(); };
+
+    async function loadProducts(){
+      const res = await fetch(API_BASE + '/api/products');
+      const data = await res.json();
+      const wrap = document.getElementById('plist');
+      wrap.innerHTML = '';
+      data.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = \`
+          <img src="\${p.image}" alt="\${p.name}" />
+          <h3>\${p.name}</h3>
+          <p>₹\${(p.price/100).toFixed(2)}</p>
+          <div class="row">
+            <button class="btn" data-id="\${p.id}" data-act="edit">Edit</button>
+            <button class="btn-outline" data-id="\${p.id}" data-act="delete">Delete</button>
+          </div>
+        \`;
+        wrap.appendChild(card);
+      });
+      wrap.onclick = async (e) => {
+        const btn = e.target.closest('button');
+        if(!btn) return;
+        const id = btn.getAttribute('data-id');
+        const act = btn.getAttribute('data-act');
+        if (act === 'delete'){
+          await apiAuthed('DELETE', '/api/products/' + id);
+          loadProducts();
+        } else if (act === 'edit'){
+          const name = prompt('Name'); if(name===null) return;
+          const price = prompt('Price in ₹'); if(price===null) return;
+          const image = prompt('Image URL'); if(image===null) return;
+          const description = prompt('Description'); if(description===null) return;
+          await apiAuthed('PUT', '/api/products/' + id, { name, price: Math.round(parseFloat(price)*100), image, description });
+          loadProducts();
+        }
+      }
+    }
+
+    document.getElementById('newProd').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const name = document.getElementById('pname').value;
+      const price = Math.round(parseFloat(document.getElementById('pprice').value)*100);
+      const image = document.getElementById('pimage').value;
+      const description = document.getElementById('pdesc').value;
+      const out = await apiAuthed('POST', '/api/products', {name, price, image, description});
+      document.getElementById('pmsg').textContent = out.ok ? 'Added' : (out.error||'Error');
+      if(out.ok) { e.target.reset(); loadProducts(); }
+    });
+
+    loadProducts();
+  </script>
+</body>
+</html>

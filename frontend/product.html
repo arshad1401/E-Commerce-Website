@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product | E‑Shop</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header class="container header">
+    <a class="logo" href="/">E‑Shop</a>
+    <nav class="nav">
+      <a href="/login.html">Login</a>
+      <a href="/register.html">Register</a>
+      <a href="/cart.html">Cart (<span id="cart-count">0</span>)</a>
+      <a href="/admin.html">Admin</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div id="product-detail"></div>
+  </main>
+
+  <footer class="container footer">
+    <span>© <span id="year"></span> E‑Shop</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/cart.js"></script>
+  <script>
+    (async function () {
+      const params = new URLSearchParams(location.search);
+      const id = params.get('id');
+      if (!id) {
+        document.getElementById('product-detail').innerHTML = '<p>Product not found.</p>';
+        return;
+      }
+      const res = await fetch(API_BASE + '/api/products/' + id);
+      const p = await res.json();
+      const el = document.getElementById('product-detail');
+      el.innerHTML = `
+        <div class="product-detail">
+          <img src="\${p.image}" alt="\${p.name}" />
+          <div class="info">
+            <h1>\${p.name}</h1>
+            <p class="price">₹\${(p.price/100).toFixed(2)}</p>
+            <p>\${p.description}</p>
+            <div class="qty-row">
+              <label>Qty</label>
+              <input id="qty" type="number" min="1" value="1">
+            </div>
+            <button class="btn" id="addBtn">Add to Cart</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('addBtn').onclick = () => {
+        const qty = parseInt(document.getElementById('qty').value || '1', 10);
+        addToCart(p.id, qty);
+      };
+      updateCartCount();
+    })();
+  </script>
+</body>
+</html>

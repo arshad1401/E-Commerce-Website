@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shop | E-Commerce</title>
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header class="container header">
+    <a class="logo" href="/">E‑Shop</a>
+    <nav class="nav">
+      <a href="/login.html">Login</a>
+      <a href="/register.html">Register</a>
+      <a href="/cart.html">Cart (<span id="cart-count">0</span>)</a>
+      <a href="/admin.html">Admin</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h1>Latest Products</h1>
+    <div id="products" class="grid"></div>
+  </main>
+
+  <footer class="container footer">
+    <span>© <span id="year"></span> E‑Shop</span>
+  </footer>
+
+  <script src="./assets/js/api.js"></script>
+  <script src="./assets/js/cart.js"></script>
+  <script src="./assets/js/products.js"></script>
+</body>
+</html>
