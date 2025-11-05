@@ -25,8 +25,8 @@ cp backend/.env.example backend/.env
 npm run start
 ```
 
-4) Visit http://localhost:3000
 
+4) Admin login details
 - Admin login: `admin@eshop.test` / `admin123`
 
 ## Notes
